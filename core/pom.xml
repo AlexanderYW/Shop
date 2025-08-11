@@ -170,6 +170,23 @@
             <version>1.1.33</version>
             <scope>provided</scope>
         </dependency>
+        <!-- BlockProt API via JitPack (provided). Exclude transitive modules that are not resolvable here. -->
+        <dependency>
+            <groupId>com.github.spnda</groupId>
+            <artifactId>BlockProt</artifactId>
+            <version>1.2.5</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.spnda.BlockProt</groupId>
+                    <artifactId>common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>me.clip</groupId>
+                    <artifactId>placeholderapi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
