@@ -1,12 +1,17 @@
 package com.snowgears.shop.hook;
 
+import com.snowgears.shop.Shop;
+import com.snowgears.shop.event.PlayerCreateShopEvent;
 import com.snowgears.shop.event.PlayerOpenShopEvent;
+import com.snowgears.shop.util.ShopMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.popcraft.bolt.BoltAPI;
+import org.popcraft.bolt.protection.BlockProtection;
 import org.popcraft.bolt.util.Permission;
 
 /**
@@ -38,6 +43,29 @@ public class BoltTrustListener implements Listener {
 
         if (hasOpenPermission(event)) {
             event.setMode(PlayerOpenShopEvent.OpenMode.OPEN_CONTAINER);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerCreateShop(PlayerCreateShopEvent event) {
+        if (boltApi == null) return;
+        if (event.getShop() == null || event.getShop().getChestLocation() == null) return;
+
+        Block chestBlock = event.getShop().getChestLocation().getBlock();
+        try {
+            BlockProtection protection = boltApi.loadProtection(chestBlock);
+            if (protection != null) {
+                // If an existing Bolt protection owner is not the creating player, deny creation
+                if (!event.getPlayer().isOp() && protection.getOwner() != null && !protection.getOwner().equals(event.getPlayer().getUniqueId())) {
+                    event.setCancelled(true);
+                    // Reuse the same message key as LWC hook for consistency
+                    ShopMessage.sendMessage("interactionIssue", "createOtherPlayer", event.getPlayer(), event.getShop());
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            // Fail open: do not block shop creation if Bolt throws, but log at debug level if available
+            Shop.getPlugin().getLogger().debug("Bolt check failed during PlayerCreateShopEvent: " + e.getMessage());
         }
     }
 }
