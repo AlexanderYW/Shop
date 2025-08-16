@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -79,7 +78,7 @@ public class ShopMessage {
         targetMaxLength = displayConfig.getInt("targetMaxLength", 40);
 
         // Load in our placeholders
-        this.loadPlaceholders();
+        loadPlaceholders();
     }
 
     /**
@@ -526,23 +525,7 @@ public class ShopMessage {
 
     private static HoverEvent getItemHoverEvent(ItemStack item) {
         if (item == null || disableItemHover) { return null; }
-
-        if (Shop.getPlugin().isMockBukkit()) { return new HoverEvent(HoverEvent.Action.SHOW_ITEM, new net.md_5.bungee.api.chat.hover.content.Item(item.getType().getKey().toString(), item.getAmount(), null)); }
-
-        // If we are 1.20.5+, we have to use the new Item Components Data system
-        if (MCVersion.atLeast("1.20.5")) {
-            // If we are paper, we can use the getUnsafe method to get the hover event, which is better than the NMS method
-            if (Shop.getPlugin().getFoliaLib().isPaper()) {
-                return ItemHoverEventHelper.createFrom(item);
-            } else {
-                // Since we are on Spigot or something else, we can't use the getUnsafe method, so we have to use the NMS method
-                return ItemHoverUtilNMS.getHoverEventNMS(item);
-            }
-        }
-        // If we are below 1.20.5, we have to use the old NBT tag system
-        else {
-            return ItemHoverEventHelper.createFromLegacy(item);
-        }
+        return ItemHoverEventHelper.createFrom(item);
     }
 
     private static TextComponent embedItem(String message, ItemStack item) {
