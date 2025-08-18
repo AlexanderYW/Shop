@@ -549,7 +549,13 @@ public class ShopMessage {
         try {
             return TextComponent.fromLegacy(text);
         } catch (NoSuchMethodError e) {
-            return TextComponent.fromArray(TextComponent.fromLegacyText(text));
+            // Likely running on <1.20 which doesn't have `.fromLegacy()` function
+            BaseComponent[] components = TextComponent.fromLegacyText(text);
+            TextComponent newComponent = new TextComponent();
+            for (BaseComponent component : components) {
+                newComponent.addExtra(component);
+            }
+            return newComponent;
         }
     }
 
