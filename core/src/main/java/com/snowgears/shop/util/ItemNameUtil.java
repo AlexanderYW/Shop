@@ -91,7 +91,8 @@ public class ItemNameUtil {
     }
 
     public static TextComponent getEnchantmentTranslatable(Enchantment enchantment){
-        if (!MCVersion.isTranslationSupported()) {
+        // Enchantment `getTranslationKey()` was added in 1.20.4, much later than Material/everywhere else...
+        if (!MCVersion.atLeast("1.20.4")) {
             return new TextComponent(getEnchantmentName(enchantment));
         }
         return new TextComponent(new TranslatableComponent(enchantment.getTranslationKey()));
