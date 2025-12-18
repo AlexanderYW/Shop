@@ -197,6 +197,11 @@
         <dependency>
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
+            <!--
+              Dynmap publishes this artifact on https://repo.mikeprimm.com/.
+              Note: some CI environments cannot reach that host; see scripts/install-dynmap-api.sh for a CI-safe
+              alternative that installs the same coordinates from GitHub Releases.
+            -->
             <version>3.2-beta-1</version>
             <scope>provided</scope>
         </dependency>
