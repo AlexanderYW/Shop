@@ -181,6 +181,18 @@
             <artifactId>BlockProt</artifactId>
             <version>1.2.6</version>
             <scope>provided</scope>
+            <exclusions>
+                <!-- Not published as standalone artifacts on Maven Central/JitPack for this coordinate -->
+                <exclusion>
+                    <groupId>com.github.spnda.BlockProt</groupId>
+                    <artifactId>common</artifactId>
+                </exclusion>
+                <!-- Optional runtime hook, not needed for Shop compilation/tests -->
+                <exclusion>
+                    <groupId>me.clip</groupId>
+                    <artifactId>placeholderapi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>us.dynmap</groupId>
