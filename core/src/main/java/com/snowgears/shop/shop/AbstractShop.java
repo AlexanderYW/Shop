@@ -130,6 +130,9 @@ public abstract class AbstractShop {
             // matches the newly calculated stock (updateStock() only forces sign updates on change).
             this.signLinesRequireRefresh = true;
             this.updateStock();
+            // Prime the container type on the owning region thread so off-thread readers
+            // (e.g. the metrics task) can use the cached value without touching the block.
+            this.getContainerType();
             Shop.getPlugin().getLogger().debug("Loaded shop successfully: " + this);
             isLoaded = true;
             return true;
@@ -258,10 +261,6 @@ public abstract class AbstractShop {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public Material getCachedContainerType() {
-        return cachedContainerType;
     }
 
     public UUID getOwnerUUID() {
