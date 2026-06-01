@@ -40,6 +40,18 @@ Before compiling the plugin, you need to set up the local Maven repository with 
 
 This script will compile all supported versions of Spigot and copy the Maven repository into the Shop folder for later use.
 
+### Build Environment Setup
+
+Building also requires a JDK 21 Maven toolchain (MockBukkit 4 runs the tests on JDK 21) and two integration APIs
+(Dynmap and BlockProt) that are not reliably resolvable from their upstream Maven/JitPack repositories. The
+`compile.sh` and `runDev.sh` scripts handle all of this automatically by invoking `scripts/setup-build-env.sh`,
+which registers the toolchain and installs those APIs from their stable GitHub Releases (each step is a no-op once
+satisfied). Ensure `JAVA_HOME` points at your JDK 21 installation before running them. To run the setup on its own:
+
+```shell
+./scripts/setup-build-env.sh
+```
+
 ### Compiling the Plugin
 
 After setting up the local Maven repository, you can compile the Shop plugin:

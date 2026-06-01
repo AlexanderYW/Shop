@@ -86,6 +86,11 @@ jobs:
       run: |
         chmod +x ./scripts/install-dynmap-api.sh
         ./scripts/install-dynmap-api.sh
+
+    - name: Install BlockProt API (CI fallback)
+      run: |
+        chmod +x ./scripts/install-blockprot-api.sh
+        ./scripts/install-blockprot-api.sh
     
     - name: Pre-fetch Maven dependencies (go-offline)
       run: |
