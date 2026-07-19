@@ -47,7 +47,15 @@ public class NMSBullshitHandler {
             String[] mcVersionSplit = mcVersion.replace(".", ",").split(",");
             // Convert mcVersion into a number like 120.4 (1_20_R4) or 121.1 (1_21_R1) so that we can use it later
             String versionNumberString = mcVersionSplit[mcVersionSplit.length-1].replace("_R", ".").replaceAll("[rvV_]*", "");
-            serverVersion = Double.parseDouble(versionNumberString);
+            double parsedVersion = Double.parseDouble(versionNumberString);
+            // Minecraft 26.1+ uses a new year-based version scheme (v26_R1 -> 26.1).
+            // The old 1.x scheme produced numbers >= 100 (v1_14_R1 -> 114.1).
+            // Remap new scheme values to 126+ so existing threshold checks (>= 120.6, >= 117.0) work.
+            if (parsedVersion < 100) {
+                parsedVersion += 100;
+            }
+            serverVersion = parsedVersion;
+            Shop.getPlugin().getLogger().debug("Parsed server version: " + serverVersion);
         }
 
         // log the server version we are on, it will be 0 when we are on a Paper server

@@ -9,21 +9,10 @@
     <modules>
         <module>core</module>
         <module>dist</module>
-        <module>v1_20_R4</module>
-        <module>v1_20_R3</module>
-        <module>v1_20_R2</module>
-        <!-- <module>v1_20_R1</module> -->
-        <module>v1_19_R3</module>
-        <module>v1_19_R2</module>
-        <module>v1_19_R1</module>
-        <module>v1_18_R2</module>
-        <module>v1_18_R1</module>
-        <module>v1_17_R1</module>
-        <module>v1_16_R3</module>
-        <module>v1_16_R2</module>
-        <module>v1_16_R1</module>
-        <module>v1_15_R1</module>
-        <module>v1_14_R1</module>
+        <!-- Legacy version-specific display modules (v1_14_R1 through v1_20_R4)
+             are excluded from the 26.x build. They require old Spigot BuildTools
+             artifacts and target pre-26.x Minecraft versions. The core module's
+             unversioned Display.java handles Paper 26.x natively. -->
     </modules>
 
     <build>
@@ -40,8 +29,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>25</source>
+                    <target>25</target>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
@@ -52,8 +41,8 @@
 
     <properties>
         <revision>1.11</revision>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
