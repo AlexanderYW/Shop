@@ -88,6 +88,18 @@ public class InventoryUtils {
         return amount;
     }
 
+    public static boolean hasRoomGivenRemoval(Inventory inventory, ItemStack itemToAdd, ItemStack itemToRemove) {
+        if (inventory == null || itemToAdd.getAmount() >= (27 * 64))
+            return false;
+        if (itemToAdd.getAmount() <= 0)
+            return true;
+
+        Inventory clonedInv = getVirtualInventory(inventory);
+        removeItem(clonedInv, itemToRemove);
+        int itemsLeftToAdd = addItem(clonedInv, itemToAdd);
+        return itemsLeftToAdd <= 0;
+    }
+
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack) {
         if (inventory == null || itemStack.getAmount() >= (27 * 64)) // 27 stacks max, large values > 27 stacks can crash server!
             return false;

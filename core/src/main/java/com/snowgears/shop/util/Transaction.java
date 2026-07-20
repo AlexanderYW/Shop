@@ -173,15 +173,17 @@ public class Transaction {
         // Create the item being sold and set the amount we are selling in the tx
         ItemStack itemToBeAdded = this.itemBeingSold.clone();
         itemToBeAdded.setAmount(this.amountBeingSold);
-        // Check if the buyer has inventory space to receive the item
-        if (!this.buyer.hasRoomForItem(itemToBeAdded)) {
+        // Check if the buyer has inventory space to receive the item, considering their payment will be removed first
+        if (!this.buyer.canReceiveItemGivenPayment(itemToBeAdded, this.price)) {
             // Failed Verification: The buyer does not have space to receive the item being bought
             if (this.buyer.isPlayer()) { return this.setError(TransactionError.INVENTORY_FULL_PLAYER); }
             else {  return this.setError(TransactionError.INVENTORY_FULL_SHOP); }
         }
 
-        // Check if the seller can accept the payment amount, aka if they have space for a currency item to be place into their inventory
-        if (!this.seller.canAcceptPayment(this.price)) {
+        // Check if the seller can accept the payment, considering the sold item will be removed first
+        ItemStack itemsRemovedFromSeller = this.itemBeingSold.clone();
+        itemsRemovedFromSeller.setAmount(this.amountBeingSold);
+        if (!this.seller.canAcceptPaymentGivenRemoval(this.price, itemsRemovedFromSeller)) {
             // Failed Verification: The buyer does not have space to receive the item being bought
             if (this.seller.isPlayer()) { return this.setError(TransactionError.INVENTORY_FULL_PLAYER); }
             else { return this.setError(TransactionError.INVENTORY_FULL_SHOP); }
@@ -225,11 +227,11 @@ public class Transaction {
             if (this.buyer.isPlayer()) { return this.setError(TransactionError.INSUFFICIENT_FUNDS_PLAYER); }
             else { return this.setError(TransactionError.INSUFFICIENT_FUNDS_SHOP); }
         }
+        // Remove sold item from seller first to free up space for payment
+        this.seller.deductItem(itemSold);
+
         // Pay the seller the funds
         this.seller.depositFunds(this.price);
-
-        // Swap Item
-        this.seller.deductItem(itemSold);
         this.buyer.depositItem(itemSold);
 
         // Special handling for Gamble shops!

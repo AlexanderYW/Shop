@@ -66,6 +66,18 @@ public class TransactionParty {
     }
 
     // Check if we have enough space to receive a payment, we might not have the inventory space for it!
+    public boolean canAcceptPaymentGivenRemoval(double paymentAmount, ItemStack itemToRemove) {
+        if (this.isAdmin) { return true; }
+
+        if (this.currencyItem != null) {
+            ItemStack payment = this.currencyItem.clone();
+            payment.setAmount((int) paymentAmount);
+            return InventoryUtils.hasRoomGivenRemoval(this.inventory, payment, itemToRemove);
+        }
+
+        return EconomyUtils.canAcceptFunds(party, this.inventory, paymentAmount);
+    }
+
     public boolean canAcceptPayment(double paymentAmount) {
         // If we are an admin, then we can accept the payment no matter what
         if (this.isAdmin) { return true; }
@@ -118,6 +130,18 @@ public class TransactionParty {
     }
 
     // Check if there is space in the inventory to recieve an item
+    public boolean canReceiveItemGivenPayment(ItemStack itemToReceive, double paymentAmount) {
+        if (this.isAdmin) { return true; }
+
+        if (this.currencyItem != null) {
+            ItemStack payment = this.currencyItem.clone();
+            payment.setAmount((int) paymentAmount);
+            return InventoryUtils.hasRoomGivenRemoval(this.inventory, itemToReceive, payment);
+        }
+
+        return InventoryUtils.hasRoom(this.inventory, itemToReceive);
+    }
+
     public boolean hasRoomForItem(ItemStack item){
         // If we are an admin, then we always have room for the item (since we don't deposit it)
         if (this.isAdmin) { return true; }
