@@ -41,12 +41,16 @@ public class PlayerNameCache {
             return cachedName;
         }
 
-        // If the player is not in the cache, add a placeholder name before attempting to load from OfflinePlayer
-        // This is to avoid issues with Bukkit.getOfflinePlayer(uuid).getName() causing a recursive error loop in 1.21.5
-        // if we run into the recursive loop issue, then we'll just return the placeholder name in the future instead of lagging the server
+        // Put a placeholder before attempting to load from OfflinePlayer
+        // This avoids recursive error loops in 1.21.5 where Bukkit.getOfflinePlayer(uuid).getName()
+        // triggers name resolution that could re-enter this method.
+        // If another thread already put a value, use it (avoid duplicate lookups).
         String shortId = uuid.toString();
         String unknownPlayerString = "Unknown Player (" + shortId.substring(0, 3) + "..." + shortId.substring(shortId.length() - 3) + ")";
-        cache.put(uuid, unknownPlayerString);
+        String existing = cache.putIfAbsent(uuid, unknownPlayerString);
+        if (existing != null) {
+            return existing;
+        }
 
         // Try loading from OfflinePlayer once, otherwise we'll just return the placeholder name
         try {
@@ -54,7 +58,7 @@ public class PlayerNameCache {
             if (player.hasPlayedBefore()) {
                 String name = player.getName();
                 if (name != null) {
-                    cache.put(uuid, name);
+                    cache.replace(uuid, unknownPlayerString, name);
                     return name;
                 }
             } else {

@@ -63,7 +63,9 @@ public class PlayerExperience {
 
             YamlConfiguration config = YamlConfiguration.loadConfiguration(playerDataFile);
 
-            UUID uuid = UUID.fromString(config.getString("player.UUID"));
+            String uuidStr = config.getString("player.UUID");
+            if (uuidStr == null) return null;
+            UUID uuid = UUID.fromString(uuidStr);
             int experience = config.getInt("player.experience");
 
             PlayerExperience data = new PlayerExperience(uuid, experience);

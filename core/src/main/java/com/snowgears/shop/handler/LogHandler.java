@@ -96,8 +96,8 @@ public class LogHandler {
             dataSource = new HikariDataSource();
 
             String jdbcURL = "jdbc:mysql://"+serverName+":"+port+"/"+databaseName;
-            for(String property : connectionProperties){
-                jdbcURL += "?"+property;
+            for(int i = 0; i < connectionProperties.size(); i++){
+                jdbcURL += (i == 0 ? "?" : "&") + connectionProperties.get(i);
             }
 
             dataSource.setJdbcUrl(jdbcURL);

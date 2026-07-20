@@ -29,18 +29,7 @@ public class ShopGUIListener implements Listener {
     }
 
     public String getInventoryViewTitle(InventoryClickEvent event) {
-        try {
-            Object view = event.getView();
-            Method getTitle = view.getClass().getMethod("getTitle");
-            getTitle.setAccessible(true);
-            return (String) getTitle.invoke(view);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return event.getView().getTitle();
     }
 
     private ShopGuiHandler.GuiIcon getNextOptionIcon(ItemStack[] iconItems, ShopGuiHandler.GuiIcon[] icons, ShopGuiHandler.GuiIcon current) {

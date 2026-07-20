@@ -30,7 +30,7 @@ public class ItemNameUtil {
         // Add custom formatting for player heads
         if(item.getItemMeta() != null && item.getItemMeta() instanceof SkullMeta){
             SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
-            if (skullMeta.getOwningPlayer() != null) {
+            if (skullMeta.getOwningPlayer() != null && skullMeta.getOwnerProfile() != null) {
                 return new TextComponent(skullMeta.getOwnerProfile().getName() + "'s Head");
             }
         }
