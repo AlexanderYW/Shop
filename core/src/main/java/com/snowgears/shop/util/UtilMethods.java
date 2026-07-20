@@ -365,12 +365,16 @@ public class UtilMethods {
         switch (direction){
             case NORTH:
                 location = location.add(-add, 0, -add); //subtract x as a hack for display tags being shifted
+                break;
             case EAST:
                 location = location.add(add, 0, -add); //subtract z as a hack for display tags being shifted
+                break;
             case SOUTH:
                 location = location.add(add, 0, add);  //add to x as a hack for display tags being shifted
+                break;
             case WEST:
                 location = location.add(-add, 0, 0);
+                break;
         }
         return location;
     }
@@ -1018,7 +1022,10 @@ public class UtilMethods {
 
         // Set max item stack size to 64 if its higher than 64
         // Otherwise the serialization complains...
-        if (item.getAmount() > 64) { item.setAmount(64); }
+        if (item.getAmount() > 64) {
+            item = item.clone();
+            item.setAmount(64);
+        }
 
         // Write the ItemStack to the ObjectOutputStream
         dataOutput.writeObject(item);

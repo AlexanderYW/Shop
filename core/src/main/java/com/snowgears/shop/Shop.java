@@ -475,9 +475,6 @@ public class Shop extends JavaPlugin {
         }
 
         worldBlackList = config.getStringList("worldBlacklist");
-        for(String world : config.getStringList("worldBlacklist")){
-            worldBlackList.add(world);
-        }
 
         clickTypeActionMap = new HashMap<>();
         clickTypeActionMap.put(ShopClickType.valueOf(config.getString("actionMappings.transactWithShop")), ShopAction.TRANSACT);

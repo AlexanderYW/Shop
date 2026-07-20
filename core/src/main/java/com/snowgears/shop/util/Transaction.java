@@ -184,7 +184,7 @@ public class Transaction {
         ItemStack itemsRemovedFromSeller = this.itemBeingSold.clone();
         itemsRemovedFromSeller.setAmount(this.amountBeingSold);
         if (!this.seller.canAcceptPaymentGivenRemoval(this.price, itemsRemovedFromSeller)) {
-            // Failed Verification: The buyer does not have space to receive the item being bought
+            // Failed Verification: The seller does not have space to receive payment for the sold item
             if (this.seller.isPlayer()) { return this.setError(TransactionError.INVENTORY_FULL_PLAYER); }
             else { return this.setError(TransactionError.INVENTORY_FULL_SHOP); }
         }

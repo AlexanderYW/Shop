@@ -121,8 +121,9 @@ public class DisplayListener implements Listener {
         if (shop == null)
             return new ItemStack(Material.AIR);
 
-
         if(InventoryUtils.isEmpty(shop.getInventory())) {
+            if (allServerRecipeResults.isEmpty())
+                return new ItemStack(Material.AIR);
             int index = new Random().nextInt(allServerRecipeResults.size());
             return allServerRecipeResults.get(index);
         } else {
