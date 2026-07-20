@@ -1,6 +1,7 @@
 package com.snowgears.shop.util;
 
 import com.snowgears.shop.Shop;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerPlayerConnection;
 import org.bukkit.Location;
@@ -167,6 +168,21 @@ public class NMSBullshitHandler {
         Shop.getPlugin().getShopHandler().disableDisplayClass();
         return null;
     }
+
+    public int getDurabilityPercent(org.bukkit.inventory.ItemStack bukkitStack) {
+        net.minecraft.world.item.ItemStack nmsStack = getMCItemStack(bukkitStack);
+        if (nmsStack == null) return 100;
+        try {
+            Integer maxDamage = nmsStack.get(DataComponents.MAX_DAMAGE);
+            Integer damage = nmsStack.get(DataComponents.DAMAGE);
+            if (maxDamage != null && maxDamage > 0) {
+                double dur = ((double)(maxDamage - (damage != null ? damage : 0)) / (double)maxDamage);
+                return (int)(dur * 100);
+            }
+        } catch (Error | Exception e) {}
+        return 100;
+    }
+
 
     public ServerPlayerConnection getPlayerConnection(Player player) {
         try {

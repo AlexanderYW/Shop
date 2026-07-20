@@ -376,10 +376,12 @@ public class UtilMethods {
     }
 
     public static int getDurabilityPercent(ItemStack item) {
-        if (item.getType().getMaxDurability() > 0) {
-            double dur = ((double)(item.getType().getMaxDurability() - item.getDurability()) / (double)item.getType().getMaxDurability());
-            return (int)(dur * 100);
-        }
+        try {
+            NMSBullshitHandler nms = Shop.getPlugin().getNmsBullshitHandler();
+            if (nms != null) {
+                return nms.getDurabilityPercent(item);
+            }
+        } catch (Error | Exception ignored) {}
         return 100;
     }
 

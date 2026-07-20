@@ -451,8 +451,11 @@ public class LogHandler {
         // This file contains statements to create our inital tables.
         // it is located in the resources.
         String setup;
-        try (InputStream in = plugin.getResource("dbsetup.sql")) { //TODO this is throwing an error. cannot access class jdk.xml.internal.SecuritySupport (in module java.xml) because module java.xml does not export jdk.xml.internal to unnamed module
-//            setup = new String(in.readAllBytes()); // Java 9+ way
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("dbsetup.sql")) {
+            if (in == null) {
+                plugin.getLogger().log(Level.WARNING, "Could not read db setup file from classloader.");
+                return;
+            }
             setup = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n")); // Legacy way
         } catch (IOException e) {
             e.printStackTrace();
