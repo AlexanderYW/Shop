@@ -163,6 +163,7 @@ public class LWCTrustIntegrationTest extends BaseMockBukkitTest {
 
         LWC lwc = Mockito.mock(LWC.class);
         Protection protection = Mockito.mock(Protection.class);
+        Mockito.when(protection.getBukkitOwner()).thenReturn(owner);
         Mockito.when(lwc.findProtection(Mockito.any(Block.class))).thenReturn(protection);
 
         LWCHookListener listener = TestReflection.allocateInstance(LWCHookListener.class);

@@ -9,6 +9,7 @@ import com.snowgears.shop.shop.AbstractShop;
 import com.snowgears.shop.util.ShopMessage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -19,7 +20,13 @@ public class LWCHookListener implements Listener {
 
     public LWCHookListener(Shop instance) {
         plugin = instance;
-        lwc = ((LWCPlugin) plugin.getServer().getPluginManager().getPlugin("LWC")).getLWC();
+        LWCPlugin lwcPlugin = (LWCPlugin) plugin.getServer().getPluginManager().getPlugin("LWC");
+        if (lwcPlugin == null) {
+            plugin.getLogger().warning("LWC plugin not found, LWCHookListener will not function");
+            lwc = null;
+            return;
+        }
+        lwc = lwcPlugin.getLWC();
     }
 
     //because LWC events do not use the Spigot event system, they apparently cannot be listened for
@@ -33,7 +40,7 @@ public class LWCHookListener implements Listener {
             AbstractShop shop = plugin.getShopHandler().getShopByChest(event.getClickedBlock());
             if(shop != null){
                 Protection protection = lwc.findProtection(event.getClickedBlock());
-                if(protection != null) {
+                if(protection != null && protection.getBukkitOwner() != null && protection.getBukkitOwner().getUniqueId().equals(event.getPlayer().getUniqueId())) {
                     protection.remove();
                 }
             }
@@ -49,7 +56,8 @@ public class LWCHookListener implements Listener {
             Protection protection = lwc.findProtection(event.getShop().getChestLocation());
             if(protection != null) {
                 //if the owner of the existing LWC protection is NOT the player creating the shop
-                if(!event.getPlayer().isOp() && !protection.getBukkitOwner().getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                OfflinePlayer owner = protection.getBukkitOwner();
+                if(!event.getPlayer().isOp() && (owner == null || !owner.getUniqueId().equals(event.getPlayer().getUniqueId()))) {
                     event.setCancelled(true);
                     ShopMessage.sendMessage("interactionIssue", "createOtherPlayer", event.getPlayer(), event.getShop());
                 }

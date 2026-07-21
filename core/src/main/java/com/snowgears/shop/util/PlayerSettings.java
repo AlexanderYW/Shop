@@ -48,6 +48,7 @@ public class PlayerSettings {
 
     public void setOption(Option option, ShopGuiHandler.GuiIcon guiIcon){
         optionsMap.put(option, guiIcon);
+        saveToFile();
     }
 
     public ShopGuiHandler.GuiIcon getGuiIcon(Option option){
@@ -128,7 +129,12 @@ public class PlayerSettings {
 
             YamlConfiguration config = YamlConfiguration.loadConfiguration(playerSettingsFile);
 
-            UUID uuid = UUID.fromString(config.getString("player.UUID"));
+            String uuidStr = config.getString("player.UUID");
+            if (uuidStr == null) {
+                Shop.getPlugin().getLogger().warning("Missing player UUID in settings file for " + playerUUID);
+                return null;
+            }
+            UUID uuid = UUID.fromString(uuidStr);
             HashMap<Option, ShopGuiHandler.GuiIcon> optionsMap = new HashMap<>();
 
             for(Option option : Option.values()){

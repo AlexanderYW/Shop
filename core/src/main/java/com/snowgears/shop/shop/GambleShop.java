@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -57,6 +58,11 @@ public class GambleShop extends AbstractShop {
 
     public void setGambleItem(){
         this.gambleItem = Shop.getPlugin().getDisplayListener().getRandomItem(this);
+        if(this.gambleItem == null) {
+            this.gambleItem = new ItemStack(Material.STONE, 1);
+        } else {
+            this.gambleItem.setAmount(1);
+        }
     }
 
     public ItemStack getGambleItem(){
