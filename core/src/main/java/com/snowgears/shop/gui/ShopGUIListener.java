@@ -106,7 +106,7 @@ public class ShopGUIListener implements Listener {
                         ItemStack settingsIcon = plugin.getGuiHandler().getIcon(ShopGuiHandler.GuiIcon.HOME_SETTINGS, null, null);
                         ItemStack commandsIcon = plugin.getGuiHandler().getIcon(ShopGuiHandler.GuiIcon.HOME_COMMANDS, null, null);
 
-                        if(clicked.getType() == listOwnShopsIcon.getType() && clicked.getItemMeta().getDisplayName().equals(listOwnShopsIcon.getItemMeta().getDisplayName())){
+                        if(listOwnShopsIcon != null && clicked.getItemMeta() != null && listOwnShopsIcon.getItemMeta() != null && clicked.getType() == listOwnShopsIcon.getType() && clicked.getItemMeta().getDisplayName().equals(listOwnShopsIcon.getItemMeta().getDisplayName())){
                             ListPlayerShopsWindow ownShopsWindow = new ListPlayerShopsWindow(player.getUniqueId(), player.getUniqueId());
                             ownShopsWindow.setPrevWindow(window);
                             plugin.getGuiHandler().setWindow(player, ownShopsWindow);
@@ -149,7 +149,9 @@ public class ShopGUIListener implements Listener {
                     }
                     else if(window instanceof ListPlayersWindow){
 
+                        if (clicked.getItemMeta() == null) return;
                         String playerUUIDString = clicked.getItemMeta().getPersistentDataContainer().get(plugin.getPlayerUUIDNameSpacedKey(), PersistentDataType.STRING);
+                        if (playerUUIDString == null) return;
                         UUID uuid;
                         try {
                             uuid = UUID.fromString(playerUUIDString);
@@ -164,6 +166,7 @@ public class ShopGUIListener implements Listener {
                     }
                     else if(window instanceof ListPlayerShopsWindow || window instanceof ListSearchResultsWindow || window instanceof ListShopsWindow){
 
+                        if (clicked.getItemMeta() == null) return;
                         String signLocation = clicked.getItemMeta().getPersistentDataContainer().get(plugin.getSignLocationNameSpacedKey(), PersistentDataType.STRING);
                         if(signLocation != null){
                             Location loc = UtilMethods.getLocation(signLocation);
