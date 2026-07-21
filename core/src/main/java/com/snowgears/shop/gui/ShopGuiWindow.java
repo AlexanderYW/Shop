@@ -40,6 +40,7 @@ public abstract class ShopGuiWindow {
 
             this.pageIndex++;
 
+            clearInvBody();
             initInvContents();
 
             return true;
@@ -60,6 +61,7 @@ public abstract class ShopGuiWindow {
                 page.setItem(45, null);
             }
 
+            clearInvBody();
             initInvContents();
 
             return true;

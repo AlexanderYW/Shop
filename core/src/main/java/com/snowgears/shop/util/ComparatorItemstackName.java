@@ -8,6 +8,8 @@ import java.util.Comparator;
 public class ComparatorItemstackName implements Comparator<ItemStack>{
 	@Override
     public int compare(ItemStack o1, ItemStack o2) {
-        return ChatColor.stripColor(o1.getItemMeta().getDisplayName()).compareTo(ChatColor.stripColor(o2.getItemMeta().getDisplayName()));
+        String name1 = o1 != null && o1.getItemMeta() != null && o1.getItemMeta().getDisplayName() != null ? ChatColor.stripColor(o1.getItemMeta().getDisplayName()) : "";
+        String name2 = o2 != null && o2.getItemMeta() != null && o2.getItemMeta().getDisplayName() != null ? ChatColor.stripColor(o2.getItemMeta().getDisplayName()) : "";
+        return name1.compareTo(name2);
     }
 }

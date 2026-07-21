@@ -12,14 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class TransactionHandler {
 
     private Shop plugin;
-    private HashMap<Location, UUID> shopMessageCooldown = new HashMap<>(); //shop location, shop owner
+    private ConcurrentHashMap<Location, UUID> shopMessageCooldown = new ConcurrentHashMap<>(); //shop location, shop owner
 
     public TransactionHandler(Shop instance) {
         plugin = instance;
@@ -132,7 +132,7 @@ public class TransactionHandler {
                     Player owner = shop.getOwner().getPlayer();
                     //the shop owner is online
                     if (owner != null && notifyOwner(shop)) {
-                        ShopGuiHandler.GuiIcon guiIcon = plugin.getGuiHandler().getIconFromOption(player, PlayerSettings.Option.NOTIFICATION_STOCK);
+                        ShopGuiHandler.GuiIcon guiIcon = plugin.getGuiHandler().getIconFromOption(owner, PlayerSettings.Option.NOTIFICATION_STOCK);
 
                         if (guiIcon != null && guiIcon == ShopGuiHandler.GuiIcon.SETTINGS_NOTIFY_STOCK_ON) {
                             ShopMessage.sendMessage(actionType.toString(), "ownerNoStock", owner, shop);
@@ -149,7 +149,7 @@ public class TransactionHandler {
                     Player owner = shop.getOwner().getPlayer();
                     //the shop owner is online
                     if (owner != null && notifyOwner(shop)) {
-                        ShopGuiHandler.GuiIcon guiIcon = plugin.getGuiHandler().getIconFromOption(player, PlayerSettings.Option.NOTIFICATION_STOCK);
+                        ShopGuiHandler.GuiIcon guiIcon = plugin.getGuiHandler().getIconFromOption(owner, PlayerSettings.Option.NOTIFICATION_STOCK);
 
                         if (guiIcon != null && guiIcon == ShopGuiHandler.GuiIcon.SETTINGS_NOTIFY_STOCK_ON) {
                             ShopMessage.sendMessage(actionType.toString(), "ownerNoSpace", owner, shop);
@@ -200,10 +200,8 @@ public class TransactionHandler {
     private boolean notifyOwner(final AbstractShop shop){
         if(shop.isAdmin())
             return false;
-        if(shopMessageCooldown.containsKey(shop.getSignLocation()))
+        if(shopMessageCooldown.putIfAbsent(shop.getSignLocation(), shop.getOwnerUUID()) != null)
             return false;
-        else{
-            shopMessageCooldown.put(shop.getSignLocation(), shop.getOwnerUUID());
 
             plugin.getFoliaLib().getScheduler().runLater(new BukkitRunnable() {
                 @Override
@@ -216,7 +214,6 @@ public class TransactionHandler {
                     //TODO if shop is null, should you clear the entire cooldown list so that that location isn't messed up?
                 }
             }, 2400); //make cooldown 2 minutes
-        }
         return true;
     }
 }

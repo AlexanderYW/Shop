@@ -284,6 +284,11 @@ public abstract class AbstractDisplay {
         removeDisplayTagsDelayedTask(player);
     }
 
+    public void removePlayerDisplayData(UUID playerUUID) {
+        entityIDs.remove(playerUUID);
+        displayTagEntityIDs.remove(playerUUID);
+    }
+
     public DisplayType getType(){
         return type;
     }

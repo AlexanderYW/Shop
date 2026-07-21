@@ -711,6 +711,13 @@ public class ShopHandler {
 
         // Clear the cached connection when displays are removed
         removeCachedPlayerConnection(player);
+
+        // Clean up entity IDs and display tag entity IDs from all shop displays
+        for (AbstractShop shop : allShops.values()) {
+            if (shop.getDisplay() != null) {
+                shop.getDisplay().removePlayerDisplayData(player.getUniqueId());
+            }
+        }
     }
 
     /**

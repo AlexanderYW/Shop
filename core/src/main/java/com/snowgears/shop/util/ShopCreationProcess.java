@@ -118,8 +118,6 @@ public class ShopCreationProcess {
     }
 
     public PricePair getPricePair(){
-        if(pricePair == null)
-            this.pricePair = new PricePair(0, 0);
         return pricePair;
     }
 
@@ -211,7 +209,6 @@ public class ShopCreationProcess {
 
     public void setBarterItemStack(ItemStack barterItemStack) {
         this.barterItemStack = barterItemStack.clone();
-        this.barterItemStack.setAmount(1);
         this.step = ChatCreationStep.BARTER_ITEM_AMOUNT;
     }
 

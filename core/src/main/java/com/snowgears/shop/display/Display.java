@@ -42,6 +42,9 @@ public class Display extends AbstractDisplay {
         net.minecraft.world.item.ItemStack itemStack = nmsHelper.getMCItemStack(is);
         Level serverLevel = nmsHelper.getMCLevel(location);
 
+        if (serverLevel == null || itemStack == null)
+            return;
+
         ItemEntity entityItem = new ItemEntity(serverLevel, location.getX(), location.getY(), location.getZ(), itemStack);
         int entityID = entityItem.getId();
         this.addEntityID(player, entityID);
@@ -72,6 +75,9 @@ public class Display extends AbstractDisplay {
         
         Location location = armorStandData.getLocation();
         ServerLevel mcServerLevel = nmsHelper.getMCServerLevel(location);
+
+        if (mcServerLevel == null)
+            return;
 
         ArmorStand armorStand = new ArmorStand(mcServerLevel, location.getX(), location.getY(), location.getZ());
         armorStand.setYRot((float)(armorStandData.getYaw()));
@@ -134,6 +140,10 @@ public class Display extends AbstractDisplay {
     @Override
     protected void spawnItemFramePacket(Player player, ItemStack is, Location location, BlockFace facing, boolean isGlowing){
         ServerLevel worldServer = nmsHelper.getMCServerLevel(location);
+
+        if (worldServer == null)
+            return;
+
         BlockPos blockPosition = new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
         ItemFrame itemFrame;
 

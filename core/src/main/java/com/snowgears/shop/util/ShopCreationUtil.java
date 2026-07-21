@@ -190,10 +190,10 @@ public class ShopCreationUtil {
             PlayerCreateShopEvent e = new PlayerCreateShopEvent(player, shop);
             plugin.getServer().getPluginManager().callEvent(e);
 
-            plugin.getLogHandler().logAction(player, shop, ShopActionType.CREATE);
-
             if (e.isCancelled())
                 return null;
+
+            plugin.getLogHandler().logAction(player, shop, ShopActionType.CREATE);
 
             if (UtilMethods.isMCVersion17Plus() && plugin.getDisplayLightLevel() > 0) {
                 Block displayBlock = shop.getChestLocation().getBlock().getRelative(BlockFace.UP);
