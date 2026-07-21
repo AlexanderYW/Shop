@@ -637,7 +637,7 @@ public class ShopMessage {
         else if (context.getProcess() != null) {
             item = context.getProcess().getItemStack(); 
         }
-        else if (context.getShop() != null || context.getShop().getItemStack() != null) {
+        else if (context.getShop() != null && context.getShop().getItemStack() != null) {
             item = context.getShop().getItemStack();
         }
         if (item == null) { return null; }

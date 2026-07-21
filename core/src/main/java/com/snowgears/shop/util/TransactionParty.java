@@ -166,9 +166,7 @@ public class TransactionParty {
         // If we are an admin, then we don't remove the item
         if (this.isAdmin) { return true; }
 
-        // @TODO: Maybe check how many items were unable to be removed from the inv to verify tx occured successfully
-        InventoryUtils.removeItem(inventory, item);
-        return true;
+        return InventoryUtils.removeItem(inventory, item) == 0;
     }
 
     @Override

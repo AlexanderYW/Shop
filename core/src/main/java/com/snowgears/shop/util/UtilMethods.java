@@ -180,7 +180,7 @@ public class UtilMethods {
 
     public static BlockFace yawToFace(float yaw) {
         final BlockFace[] axis = {BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST};
-        return axis[Math.round(yaw / 90f) & 0x3];
+        return axis[Math.floorMod(Math.round(yaw / 90f), 4)];
     }
 
     public static float faceToYaw(BlockFace bf) {
@@ -373,7 +373,7 @@ public class UtilMethods {
                 location = location.add(add, 0, add);  //add to x as a hack for display tags being shifted
                 break;
             case WEST:
-                location = location.add(-add, 0, 0);
+                location = location.add(-add, 0, add);
                 break;
         }
         return location;
