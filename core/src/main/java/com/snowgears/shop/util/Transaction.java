@@ -71,7 +71,6 @@ public class Transaction {
             this.buyer = new TransactionParty(true, false, player, player.getInventory());
             this.seller = new TransactionParty(false, shop.isAdmin(), shop.getOwner(), shop.getInventory());
 
-            ((GambleShop)shop).setGambleItem();
             this.itemBeingSold = ((GambleShop) shop).getGambleItem();
             this.amountBeingSold = ((GambleShop) shop).getGambleItem().getAmount();
         }
@@ -228,7 +227,12 @@ public class Transaction {
             else { return this.setError(TransactionError.INSUFFICIENT_FUNDS_SHOP); }
         }
         // Remove sold item from seller first to free up space for payment
-        this.seller.deductItem(itemSold);
+        if (!this.seller.deductItem(itemSold)) {
+            // Rollback: return funds to buyer
+            this.buyer.depositFunds(this.price);
+            if (this.buyer.isPlayer()) { return this.setError(TransactionError.INVENTORY_FULL_PLAYER); }
+            else { return this.setError(TransactionError.INVENTORY_FULL_SHOP); }
+        }
 
         // Pay the seller the funds
         this.seller.depositFunds(this.price);
@@ -236,6 +240,8 @@ public class Transaction {
 
         // Special handling for Gamble shops!
         if (shop.getType() == ShopType.GAMBLE) {
+            // Select the gamble item at execution time (not in constructor)
+            if (shop instanceof GambleShop) { ((GambleShop) shop).setGambleItem(); }
             // Cycle display to show won item
             if (shop instanceof GambleShop) { ((GambleShop) shop).shuffleGambleItem(player); }
             // Exit early

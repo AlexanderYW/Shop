@@ -17,7 +17,9 @@ public class EconomyUtils {
                 double balance = Shop.getPlugin().getEconomy().getBalance(player);
                 return (balance >= amount);
             case ITEM:
-                ItemStack currency = Shop.getPlugin().getItemCurrency().clone();
+                ItemStack currencyTemplate = Shop.getPlugin().getItemCurrency();
+                if (currencyTemplate == null) return false;
+                ItemStack currency = currencyTemplate.clone();
                 currency.setAmount(1);
                 int stock = InventoryUtils.getAmount(inventory, currency);
                 return (stock >= (int)Math.ceil(amount));

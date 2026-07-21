@@ -690,7 +690,7 @@ public class ShopMessage {
             i++;
             // Add a new line character between our rows, don't add it if we are the last item (since we don't want an extra line!
             String addNewLine = i < (items.size()) ? "\n" : "";
-            ItemStack item = entry.getKey();
+            ItemStack item = entry.getKey().clone();
             item.setAmount(entry.getValue());
 
             PlaceholderContext itemContext = new PlaceholderContext();
