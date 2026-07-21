@@ -21,6 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ShopGuiHandler {
@@ -43,13 +44,13 @@ public class ShopGuiHandler {
     }
 
     public Shop plugin;
-    private HashMap<UUID, ShopGuiWindow> playerGuiWindows = new HashMap<>();
-    private HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
+    private ConcurrentHashMap<UUID, ShopGuiWindow> playerGuiWindows = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, PlayerSettings> playerSettings = new ConcurrentHashMap<>();
 
-    private HashMap<GuiIcon, ItemStack> guiIcons = new HashMap<>();
-    private HashMap<GuiTitle, String> guiWindowTitles = new HashMap<>();
+    private ConcurrentHashMap<GuiIcon, ItemStack> guiIcons = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<GuiTitle, String> guiWindowTitles = new ConcurrentHashMap<>();
 
-    private HashMap<UUID, ItemStack> playerHeads = new HashMap<>();
+    private ConcurrentHashMap<UUID, ItemStack> playerHeads = new ConcurrentHashMap<>();
 
     public ShopGuiHandler(Shop instance){
         plugin = instance;
