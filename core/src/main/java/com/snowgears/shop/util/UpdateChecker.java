@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 //author: Benz56
 //https://github.com/Benz56/Async-Update-Checker/blob/master/UpdateChecker.java
@@ -42,6 +45,7 @@ public class UpdateChecker {
     private static final Permission UPDATE_PERM = new Permission("shop.update", PermissionDefault.FALSE);
     private static final long CHECK_INTERVAL = 12_000; //In ticks.
     private WrappedTask task;
+    private final List<Listener> registeredListeners = new ArrayList<>();
 
 
     public UpdateChecker(final Shop plugin) {
@@ -68,37 +72,45 @@ public class UpdateChecker {
                     }
 
                     // Are we running the current version?
-                    if (compareVersions(localPluginVersion, spigotPluginVersion) == 0) return;
+                    if (spigotPluginVersion == null || compareVersions(localPluginVersion, spigotPluginVersion) == 0) return;
                     // Are we running an older verion?
                     if (compareVersions(localPluginVersion, spigotPluginVersion) < 0) {
                         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', embedVersions(UPDATE_MSG, localPluginVersion, spigotPluginVersion)));
 
                         //Register the PlayerJoinEvent
-                        plugin.getFoliaLib().getScheduler().runNextTick(nextTask -> Bukkit.getPluginManager().registerEvents(new Listener() {
-                            @EventHandler(priority = EventPriority.MONITOR)
-                            public void onPlayerJoin(final PlayerJoinEvent event) {
-                                final Player player = event.getPlayer();
-                                if (!player.isOp()) return;
-                                TextComponent updateMsg = new TextComponent(ChatColor.translateAlternateColorCodes('&', embedVersions(UPDATE_MSG, localPluginVersion, spigotPluginVersion)));
-                                updateMsg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open Shop plugin page").create()));
-                                updateMsg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/shop-the-intuitive-shop-plugin.9628/updates"));
-                                player.spigot().sendMessage(updateMsg);
-                            }
-                        }, plugin));
+                        plugin.getFoliaLib().getScheduler().runNextTick(nextTask -> {
+                            Listener listener = new Listener() {
+                                @EventHandler(priority = EventPriority.MONITOR)
+                                public void onPlayerJoin(final PlayerJoinEvent event) {
+                                    final Player player = event.getPlayer();
+                                    if (!player.isOp()) return;
+                                    TextComponent updateMsg = new TextComponent(ChatColor.translateAlternateColorCodes('&', embedVersions(UPDATE_MSG, localPluginVersion, spigotPluginVersion)));
+                                    updateMsg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open Shop plugin page").create()));
+                                    updateMsg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/shop-the-intuitive-shop-plugin.9628/updates"));
+                                    player.spigot().sendMessage(updateMsg);
+                                }
+                            };
+                            Bukkit.getPluginManager().registerEvents(listener, plugin);
+                            registeredListeners.add(listener);
+                        });
                     }
                     /* RUNNING SHOP DEV VERSION */
                     if (compareVersions(localPluginVersion, spigotPluginVersion) > 0) {
                         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', embedVersions(DEV_VERSION_MSG, localPluginVersion, spigotPluginVersion)));
 
                         //Register the PlayerJoinEvent
-                        plugin.getFoliaLib().getScheduler().runNextTick(nextTask -> Bukkit.getPluginManager().registerEvents(new Listener() {
-                            @EventHandler(priority = EventPriority.MONITOR)
-                            public void onPlayerJoin(final PlayerJoinEvent event) {
-                                final Player player = event.getPlayer();
-                                if (!player.isOp()) return;
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', embedVersions(DEV_VERSION_MSG, localPluginVersion, spigotPluginVersion)));
-                            }
-                        }, plugin));
+                        plugin.getFoliaLib().getScheduler().runNextTick(nextTask -> {
+                            Listener listener = new Listener() {
+                                @EventHandler(priority = EventPriority.MONITOR)
+                                public void onPlayerJoin(final PlayerJoinEvent event) {
+                                    final Player player = event.getPlayer();
+                                    if (!player.isOp()) return;
+                                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', embedVersions(DEV_VERSION_MSG, localPluginVersion, spigotPluginVersion)));
+                                }
+                            };
+                            Bukkit.getPluginManager().registerEvents(listener, plugin);
+                            registeredListeners.add(listener);
+                        });
                     }
 
                     cancelTask(); //Cancel the runnable as an update has been found.
@@ -109,6 +121,10 @@ public class UpdateChecker {
 
     public void cancelTask() {
         plugin.getFoliaLib().getScheduler().cancelTask(task);
+        for (org.bukkit.event.Listener listener : registeredListeners) {
+            HandlerList.unregisterAll(listener);
+        }
+        registeredListeners.clear();
     }
 
     private String embedVersions(String msg, String runningVersion, String latestReleasedVersion) {

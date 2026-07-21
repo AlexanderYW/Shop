@@ -224,18 +224,18 @@ public class WorldGuardHook {
                 return null;
             }
             
-            return flagCache.computeIfAbsent(flagName, name -> {
-                try {
-                    Flag<?> flag = registry.get(name);
-                    if (flag instanceof StateFlag) {
-                        return (StateFlag) flag;
-                    }
-                } catch (Exception e) {
-                    // Flag not found, log warning
-                    Bukkit.getLogger().warning("WorldGuard flag '" + name + "' not found or not a StateFlag");
+            try {
+                Flag<?> flag = registry.get(flagName);
+                if (flag instanceof StateFlag) {
+                    StateFlag stateFlag = (StateFlag) flag;
+                    flagCache.put(flagName, stateFlag);
+                    return stateFlag;
                 }
-                return null;
-            });
+            } catch (Exception e) {
+                // Flag not found, log warning
+                Bukkit.getLogger().warning("WorldGuard flag '" + flagName + "' not found or not a StateFlag");
+            }
+            return null;
         }
 
         private Internal() {
@@ -303,8 +303,10 @@ public class WorldGuardHook {
             if (set.size() == 0)
                 return false;
 
-            if(regions.getApplicableRegions(vLoc).isOwnerOfAll(localPlayer)){
-                return true;
+            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set.getRegions()) {
+                if (region.isOwner(localPlayer)) {
+                    return true;
+                }
             }
         } catch (NoClassDefFoundError ignore) {
         }
